@@ -56,7 +56,7 @@ const getMyChats = TryCatch(async (req, res, next) => {
       members: members.reduce((prev, curr) => {
         if (curr._id.toString() !== req.user.toString()) {
           prev.push(curr._id);
-        }
+        } 
         return prev;
       }, []),
     };
