@@ -13,7 +13,6 @@ import {
 } from "../utils/features.js";
 import { ErrorHandler } from "../utils/utility.js";
 
-
 const newUser = TryCatch(async (req, res, next) => {
   const { name, username, password, bio } = req.body;
   const file = req.file;
@@ -35,7 +34,10 @@ const newUser = TryCatch(async (req, res, next) => {
     avatar,
   });
 
-  sendToken(res, user, 201, "User created");
+  res.status(201).json({
+    success: true,
+    message: "User created successfully. Please log in.",
+  });
 });
 
 const login = TryCatch(async (req, res, next) => {
@@ -57,6 +59,40 @@ const getMyProfile = TryCatch(async (req, res, next) => {
   const user = await User.findById(req.user);
 
   if (!user) return next(new ErrorHandler("User not found", 404));
+
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
+
+const deleteMyProfile = TryCatch(async (req, res, next) => {
+  const user = await User.findById(req.user);
+
+  if (!user) return next(new ErrorHandler("User not found", 404));
+  await User.findByIdAndDelete(req.user);
+  res.status(200).json({
+    success: true,
+    message: "Profile deleted Successfully",
+  });
+});
+
+const updateMyProfile = TryCatch(async (req, res, next) => {
+  const { name, username, bio } = req.body;
+
+  if (!req.user) {
+    return next(new ErrorHandler("User not found ", 404));
+  }
+
+  const user = await User.findByIdAndUpdate(
+    req.user,
+    { name, username, bio },
+    { new: true, runValidators: true }
+  );
+
+  if (!user) {
+    return next(new ErrorHandler("User not found ", 404));
+  }
 
   res.status(200).json({
     success: true,
@@ -237,4 +273,6 @@ export {
   newUser,
   searchUser,
   sendFriendRequest,
+  deleteMyProfile,
+  updateMyProfile,
 };

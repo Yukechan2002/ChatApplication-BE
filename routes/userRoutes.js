@@ -1,6 +1,7 @@
 import express from "express";
 import {
   acceptFriendRequest,
+  deleteMyProfile,
   getMyFriends,
   getMyNotifications,
   getMyProfile,
@@ -9,6 +10,7 @@ import {
   newUser,
   searchUser,
   sendFriendRequest,
+  updateMyProfile,
 } from "../controllers/userControllers.js";
 import {
   acceptRequestValidator,
@@ -30,6 +32,10 @@ app.post("/login", loginValidator(), validateHandler, login);
 app.use(isAuthenticated);
 
 app.get("/me", getMyProfile);
+
+app.delete("/me/delete/:id",deleteMyProfile);
+
+app.put("/me/update/:id",updateMyProfile)
 
 app.get("/logout", logout);
 
